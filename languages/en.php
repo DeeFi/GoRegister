@@ -1,0 +1,57 @@
+<?php
+
+	$plugin_tx['GoRegister']['ausgabe_name']="Last Name";
+	$plugin_tx['GoRegister']['ausgabe_vorname']="First Name";
+	$plugin_tx['GoRegister']['ausgabe_rang']="Rank";
+	$plugin_tx['GoRegister']['ausgabe_stadt']="Club";
+	$plugin_tx['GoRegister']['ausgabe_land']="Country";
+	$plugin_tx['GoRegister']['land_be']="Belgium";
+	$plugin_tx['GoRegister']['flag_be']="be.gif";
+	$plugin_tx['GoRegister']['land_ch']="Swiss";
+	$plugin_tx['GoRegister']['flag_ch']="ch.gif";
+	$plugin_tx['GoRegister']['land_cn']="China";
+	$plugin_tx['GoRegister']['flag_cn']="cn.gif";
+	$plugin_tx['GoRegister']['land_de']="Germany";
+	$plugin_tx['GoRegister']['flag_de']="de.gif";
+	$plugin_tx['GoRegister']['land_ee']="Estland";
+	$plugin_tx['GoRegister']['flag_ee']="ee.gif";
+	$plugin_tx['GoRegister']['land_es']="Spain";
+	$plugin_tx['GoRegister']['flag_es']="es.gif";
+	$plugin_tx['GoRegister']['land_fi']="Finland";
+	$plugin_tx['GoRegister']['flag_fi']="fi.gif";
+	$plugin_tx['GoRegister']['land_fr']="France";
+	$plugin_tx['GoRegister']['flag_fr']="fr.gif";
+	$plugin_tx['GoRegister']['land_gr']="Greece";
+	$plugin_tx['GoRegister']['flag_gr']="gr.gif";
+	$plugin_tx['GoRegister']['land_hu']="Hungary";
+	$plugin_tx['GoRegister']['flag_hu']="hu.gif";
+	$plugin_tx['GoRegister']['land_it']="Italy";
+	$plugin_tx['GoRegister']['flag_it']="it.gif";
+	$plugin_tx['GoRegister']['land_jp']="Japan";
+	$plugin_tx['GoRegister']['flag_jp']="jp.gif";
+	$plugin_tx['GoRegister']['land_kr']="South Korea";
+	$plugin_tx['GoRegister']['flag_kr']="kr.gif";
+	$plugin_tx['GoRegister']['land_mt']="Malta";
+	$plugin_tx['GoRegister']['flag_mt']="mt.gif";
+	$plugin_tx['GoRegister']['land_nl']="Netherlands";
+	$plugin_tx['GoRegister']['flag_nl']="nl.gif";
+	$plugin_tx['GoRegister']['land_no']="Norway";
+	$plugin_tx['GoRegister']['flag_no']="no.gif";
+	$plugin_tx['GoRegister']['land_pl']="Poland";
+	$plugin_tx['GoRegister']['flag_pl']="pl.gif";
+	$plugin_tx['GoRegister']['land_pt']="Portugal";
+	$plugin_tx['GoRegister']['flag_pt']="pt.gif";
+	$plugin_tx['GoRegister']['land_ro']="Romania";
+	$plugin_tx['GoRegister']['flag_ro']="ro.gif";
+	$plugin_tx['GoRegister']['land_ru']="Russia";
+	$plugin_tx['GoRegister']['flag_ru']="ru.gif";
+	$plugin_tx['GoRegister']['land_tr']="Turkey";
+	$plugin_tx['GoRegister']['flag_tr']="tr.gif";
+	$plugin_tx['GoRegister']['land_uk']="Great Britain";
+	$plugin_tx['GoRegister']['flag_uk']="uk.gif";
+	$plugin_tx['GoRegister']['land_us']="USA";
+	$plugin_tx['GoRegister']['flag_us']="us.gif";
+	$plugin_tx['GoRegister']['land_lu']="Luxembourg";
+	$plugin_tx['GoRegister']['flag_lu']="lu.gif";
+
+?>

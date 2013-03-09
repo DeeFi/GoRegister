@@ -1,0 +1,53 @@
+/* **************   STYLE FOR THE WEB FORM EXAMPLE   *************** */
+
+#divHelp {
+    display:none;
+    position: absolute;
+    margin:0 0 0 0;
+    width: auto;
+    max-height:400px;
+    overflow:auto;
+    padding:10px 20px 10px 10px;
+    background-color:white;
+    border:2px solid black;
+    text-align:left;
+    z-index:90;
+}
+
+#divHelp table {
+    margin: 0;
+}
+
+#divHelp td,
+#divHelp th {
+    border: 1px solid #222;
+}
+
+#divHelp th {
+    border-bottom: 0;
+}
+
+#divHelp .aForm_helpTables tr:hover td {
+    background-color: #FFCDCD;
+    cursor: pointer;
+}
+
+#divHelp .last_name,
+#divHelp .name {
+    width: 140px;
+    padding: 4px;
+}
+
+#divHelp .club,
+#divHelp .rank,
+#divHelp .country {
+    width: 70px;
+}
+
+#imgHelpExit {
+    position:absolute;
+    top:2px;
+    right:2px;
+}
+
+/* **************************************************************** */
