@@ -14,11 +14,7 @@ Funktionen
 
 ToDo
 ----
-### Frontend
-- Nothing yet
-        
-### Backend
-- Nothing yet
+- Merge GoRegister and GoRatinglist
 
 Anmerkung
 ---------
