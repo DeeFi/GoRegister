@@ -9,7 +9,7 @@ Funktionen
 - Ausgabe durch: `#CMSimple $output.= anmelde_ausgabe("dateiname.csv");#`
 
 ### Backend
-- Ausgabe im Backend durch die Auswahl des Menüpunktes "Csv_Ausgabe"
+- Ausgabe im Backend durch die Auswahl des Menüpunktes "GoRegister"
 - Hinzufügen neuer Daten im Backend. Daten werden fortlaufend in die CSV Datei eingetragen. Es findet keine Sortierung statt.
 
 ToDo
