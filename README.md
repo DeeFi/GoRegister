@@ -14,7 +14,7 @@ Funktionen
 
 ToDo
 ----
-- Merge GoRegister and GoRatinglist
+- Merge [GoRegister](https://github.com/DeeFi/GoRegister/),[GoRatinglist](https://github.com/DeeFi/GoRatinglist/), GoTournament
 
 Anmerkung
 ---------
