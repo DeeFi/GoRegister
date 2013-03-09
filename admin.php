@@ -1,6 +1,18 @@
 <?php
+function GoRegister_get_pth_to_plugin() {
+    //Pfad zu Stammverzeichnis
+    Global $pth;
 
-function makeTextfield($name, $desc, $val){
+    $plugin = basename(dirname(__FILE__),"/");
+    $plugin_pth = $pth['folder']['plugins'].$plugin.'/';
+
+    return $plugin_pth;
+}
+
+$plugin_pth = GoRegister_get_pth_to_plugin();
+
+
+function GoRegister_makeTextfield($name, $desc, $val){
     if(isset($_POST[$name]))
         $val = stripslashes(htmlentities($_POST[$name], ENT_QUOTES));
     $d = "<tr>\n";
@@ -18,7 +30,7 @@ function makeTextfield($name, $desc, $val){
     return $d;
 }
 
-function makeRangSelect($name,$desc) {
+function GoRegister_makeRangSelect($name,$desc) {
     $d = "<th><label for=".$name.">".$desc.":</label></th>\n";
     $d .= "<td>\n";
     $d .= "<select name=".$name." id=".$name.">\n";
@@ -40,18 +52,18 @@ function makeRangSelect($name,$desc) {
 }
 
 // Prüft den gegebenen String auf Fehler.
-function checkStringInput($input, $desc, &$errors, $plugin_tx) {
+function GoRegister_checkStringInput($input, $desc, &$errors, $plugin_tx) {
     if(strlen($input) == 0 OR strlen($input) > 64)
         $errors[] = $desc . $plugin_tx['GoRegister']['eingabe_ungueltig'];
 }
 
-function include_getdata_js_css() 
+
+function GoRegister_include_getdata_js_css() 
 {
-    Global $pth;
+    Global $plugin_pth;
     Global $hjs;
 
-    $plugin = basename(dirname(__FILE__),"/");
-    $plugin_pth = $pth['folder']['plugins'].$plugin.'/';
+
 
     if(file_exists($plugin_pth.'js/getdata.js')) 
     {
@@ -66,25 +78,25 @@ function include_getdata_js_css()
 
 
 
-function admin_formular_ausgabe($csvfile) 
+function GoRegister_admin_formular_ausgabe($csvfile) 
 {
     // Aufrufen der Language Dateien
     GLOBAL $plugin_tx;
     //Aktuelle URL
     GLOBAL $su;
     //Pfad zu Stammverzeichnis
-    Global $pth;
+    Global $plugin_pth;
 
     // Wenn Name gesetzt ist, wurde ein neuer Beitrag gesetzt, und es soll nichts gelöscht werden!
     if (!isset($_POST['name']))
     {
         if ($_GET['deleteid'])
         {
-            $o .= delete_row_in_csv();
+            $o .= GoRegister_delete_row_in_csv();
         }
     }
 
-    include_getdata_js_css();
+    GoRegister_include_getdata_js_css();
 
 
     $o .= '<h2>Vorangemeldete Spieler</h2>' . "\n";
@@ -103,8 +115,7 @@ function admin_formular_ausgabe($csvfile)
             </tr>'. "\n"; 
 
     //öffnen der Datei
-    $plugin = basename(dirname(__FILE__),"/");
-    $plugin_pth = $pth['folder']['plugins'].$plugin.'/';
+
     $datei = fopen($plugin_pth . $csvfile,"r");
     
     // Alles einlesen
@@ -141,11 +152,11 @@ function admin_formular_ausgabe($csvfile)
     $o .=   '<!-- Beginn of Neue Daten Eingeben -->
             <form action="'.$_GET['admin'].'" method="post">
             <table width="50%" border="1" cellpadding="4" cellspacing="0">';       
-    $o .=   makeTextfield("last_name",$plugin_tx['GoRegister']['ausgabe_name'], ""); 
-    $o .=   makeTextfield("name",$plugin_tx['GoRegister']['ausgabe_vorname'], "");
-    $o .=   makeRangSelect("strength",$plugin_tx['GoRegister']['ausgabe_rang']);
-    $o .=   makeTextfield("club",$plugin_tx['GoRegister']['ausgabe_stadt'], "");
-    $o .=   makeTextfield("country",$plugin_tx['GoRegister']['ausgabe_land'], "");
+    $o .=   GoRegister_makeTextfield("last_name",$plugin_tx['GoRegister']['ausgabe_name'], ""); 
+    $o .=   GoRegister_makeTextfield("name",$plugin_tx['GoRegister']['ausgabe_vorname'], "");
+    $o .=   GoRegister_makeRangSelect("strength",$plugin_tx['GoRegister']['ausgabe_rang']);
+    $o .=   GoRegister_makeTextfield("club",$plugin_tx['GoRegister']['ausgabe_stadt'], "");
+    $o .=   GoRegister_makeTextfield("country",$plugin_tx['GoRegister']['ausgabe_land'], "");
     $o .=   '<tr>
             <td colspan="2" align="right">
             <input type="submit" value="'.$plugin_tx['GoRegister']['eingabe_senden'].'" name="buttonSubmit"/>
@@ -182,13 +193,12 @@ function admin_formular_ausgabe($csvfile)
 }
 
 
-function admin_GoRegister($csvfile) {
+function GoRegister_admin_GoRegister($csvfile) {
     // Aufrufen der Sprach-Dateien
     GLOBAL $plugin_tx;
 
-    Global $pth;
-    $plugin = basename(dirname(__FILE__),"/");
-    $plugin_pth = $pth['folder']['plugins'].$plugin.'/';
+    Global $plugin_pth;
+
     
     if (isset($_POST["buttonSubmit"]) && $_POST["buttonSubmit"] == "Senden")
     {
@@ -205,11 +215,11 @@ function admin_GoRegister($csvfile) {
         $stadt = $_POST["club"];
         $land = $_POST["country"];    
         // Eingaben prüfen.
-        checkStringInput($name, $plugin_tx['GoRegister']['ausgabe_name'], $errors, $plugin_tx);
-        checkStringInput($vorname, $plugin_tx['GoRegister']['ausgabe_vorname'], $errors, $plugin_tx);
-        checkStringInput($vorname, $plugin_tx['GoRegister']['ausgabe_rang'], $errors, $plugin_tx);
-        checkStringInput($stadt, $plugin_tx['GoRegister']['ausgabe_stadt'], $errors, $plugin_tx);
-        checkStringInput($land, $plugin_tx['GoRegister']['ausgabe_land'], $errors, $plugin_tx);        
+        GoRegister_checkStringInput($name, $plugin_tx['GoRegister']['ausgabe_name'], $errors, $plugin_tx);
+        GoRegister_checkStringInput($vorname, $plugin_tx['GoRegister']['ausgabe_vorname'], $errors, $plugin_tx);
+        GoRegister_checkStringInput($vorname, $plugin_tx['GoRegister']['ausgabe_rang'], $errors, $plugin_tx);
+        GoRegister_checkStringInput($stadt, $plugin_tx['GoRegister']['ausgabe_stadt'], $errors, $plugin_tx);
+        GoRegister_checkStringInput($land, $plugin_tx['GoRegister']['ausgabe_land'], $errors, $plugin_tx);        
         $land = strtolower($land);                    
         $keineDaten = false;
         
@@ -237,11 +247,11 @@ function admin_GoRegister($csvfile) {
                 $o .=  '<ul>'."\n"; 
             }       
         }
-        $inhalt = admin_formular_ausgabe($csvfile); 
+        $inhalt = GoRegister_admin_formular_ausgabe($csvfile); 
     }
     else 
     {    
-        $inhalt = admin_formular_ausgabe($csvfile);
+        $inhalt = GoRegister_admin_formular_ausgabe($csvfile);
     }
     $o .= $inhalt;
     return $o;
@@ -253,13 +263,10 @@ function admin_GoRegister($csvfile) {
  * Autor: Mathias Neumann (http://www.maneumann.com)
  * 20.03.2010
  */
-function readCSVFile()
+function GoRegister_readCSVFile()
 {
     //Pfad zu Stammverzeichnis
-    Global $pth;
-
-    $plugin = basename(dirname(__FILE__),"/");
-    $plugin_pth = $pth['folder']['plugins'].$plugin.'/';
+    Global $plugin_pth;
 
     $settingsfile = $plugin_pth . "settings.dat";
     if(file_exists($settingsfile))
@@ -286,13 +293,11 @@ function readCSVFile()
  * @link http://gist.github.com/385876
  */
 
-function csv_to_array($filename='')
+function GoRegister_csv_to_array($filename='')
 {
-    Global $pth;
-    $plugin = basename(dirname(__FILE__),"/");
-    $plugin_pth = $pth['folder']['plugins'].$plugin.'/';
+    Global $plugin_pth;
 
-    $filename = $plugin_pth.readCSVFile();
+    $filename = $plugin_pth.GoRegister_readCSVFile();
 
     $delimiter = '|';
     if(!file_exists($filename) || !is_readable($filename))
@@ -312,20 +317,18 @@ function csv_to_array($filename='')
 }
 
 
-function delete_row_in_csv()
+function GoRegister_delete_row_in_csv()
 {
-    Global $pth;
-    $plugin = basename(dirname(__FILE__),"/");
-    $plugin_pth = $pth['folder']['plugins'].$plugin.'/';
+    Global $plugin_pth;
 
-    $filename_old = readCSVFile();
+    $filename_old = GoRegister_readCSVFile();
     $filename_new = $filename_old.'.tmp';
 
     $old_file = $plugin_pth.$filename_old;
     $new_file = $plugin_pth.$filename_new;
     $handler = fopen($new_file, 'w+');
 
-    $csv_in_array = csv_to_array();
+    $csv_in_array = GoRegister_csv_to_array();
 
     if(isset($_GET['deleteid']))
     {
@@ -354,13 +357,11 @@ function delete_row_in_csv()
  * Autor: Mathias Neumann (http://www.maneumann.com)
  * 
  */
-function writeCSVFile($filename)
+function GoRegister_writeCSVFile($filename)
 {
     //Pfad zu Stammverzeichnis
-    Global $pth;
+    Global $plugin_pth;
 
-    $plugin = basename(dirname(__FILE__),"/");
-    $plugin_pth = $pth['folder']['plugins'].$plugin.'/';
     $settingsfile = $plugin_pth . "settings.dat";
     
     $o = '<i>Aktualisiere Einstellungen in "' . $settingsfile . '".</i><br/>';
@@ -376,13 +377,10 @@ function writeCSVFile($filename)
  * Autor: Mathias Neumann (http://www.maneumann.com)
  * 20.03.2010
  */
-function makeFileChooser($name, $desc, $val)
+function GoRegister_makeFileChooser($name, $desc, $val)
 {
     //Pfad zu Stammverzeichnis
-    Global $pth;
-
-    $plugin = basename(dirname(__FILE__),"/");
-    $plugin_pth = $pth['folder']['plugins'].$plugin.'/';
+    Global $plugin_pth;
 
     // Enumerate csv files.
     $csvfiles = array(); 
@@ -411,9 +409,6 @@ function makeFileChooser($name, $desc, $val)
     return $o;
 }
 
-
-
-
 /*
  * Angepasst von Mathias Neumann (http://www.maneumann.com)
  *
@@ -424,13 +419,10 @@ function makeFileChooser($name, $desc, $val)
 if(isset($GoRegister))
 {
     //Pfad zu Stammverzeichnis
-    Global $pth;
+    Global $plugin_pth;
 
     $admin= isset($_POST['admin']) ? $_POST['admin'] : $_GET['admin'];
     $action= isset($_POST['action']) ? $_POST['action'] : $_GET['action'];
-    
-    $plugin = basename(dirname(__FILE__),"/");
-    $plugin_pth = $pth['folder']['plugins'].$plugin.'/';
     
     $o.= print_plugin_admin('on');
     if($admin<>'plugin_main')
@@ -440,7 +432,7 @@ if(isset($GoRegister))
     
     // Check for csv-file.
     if(!isset($_POST["CSVfile"]) OR strlen(trim($_POST["CSVfile"])) == 0)
-        $cvsfile = readCSVFile();
+        $cvsfile = GoRegister_readCSVFile();
     else
     { 
         if(file_exists($plugin_pth . trim($_POST["CSVfile"])))
@@ -448,12 +440,12 @@ if(isset($GoRegister))
             $cvsfile = trim($_POST["CSVfile"]);
             //$o .= '<br/><i>Gewaehlte Eingabedatei "' . $cvsfile . '".</i><br/>' . "\n";
             // Store file.
-            $o .= writeCSVFile($cvsfile, $o);
+            $o .= GoRegister_writeCSVFile($cvsfile, $o);
         }
         else
         {           
             // Read back old value.
-            $cvsfile = readCSVFile();
+            $cvsfile = GoRegister_readCSVFile();
             $o .= '<br/><i style="color: red; font-size: 120%;">Gewaehlte Eingabedatei "' . trim($_POST["CSVfile"]) . '" existiert nicht. Wähle alte Datei "' . $cvsfile . '".</i><br/>' . "\n";
         }
         
@@ -466,7 +458,7 @@ if(isset($GoRegister))
         // Ausgabe der aktuell betrachteten Listendatei (zur Orientierung).
         $o .= '<br/><b>Aktuelle Liste: ' . $cvsfile . '</b>' . "\n";
         
-        $o .= admin_GoRegister($cvsfile);
+        $o .= GoRegister_admin_GoRegister($cvsfile);
     }
  
  
@@ -476,7 +468,7 @@ if(isset($GoRegister))
                 <h4>Quelldatei angeben<h4>
                 <form action="' . htmlspecialchars($_SERVER['REQUEST_URI']) . '" method="post">
                 <table width="50%" border="1" cellpadding="4" cellspacing="0">';     
-        $o .= makeFileChooser("CSVfile", "CSV-Eingabedatei:", $cvsfile); 
+        $o .= GoRegister_makeFileChooser("CSVfile", "CSV-Eingabedatei:", $cvsfile); 
         $o .= '<tr>
                 <td colspan="2" align="right">
                 <input type="submit" value="'.$plugin_tx['GoRegister']['eingabe_senden'].'" name="buttonSubmit"/>

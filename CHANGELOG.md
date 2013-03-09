@@ -1,5 +1,8 @@
 Changelog
 ---------
+### 0.7.3. 090313
+- [F] several code improvements
+
 ### 0.7.2 - 080313
 - [F] Fixed delete new entry, if an entry was deleted before
 - [F] Rename to GoRegister
