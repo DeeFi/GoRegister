@@ -1,5 +1,9 @@
 Changelog
 ---------
+### 0.8.1 100313
+- [S] Added some html5-validation to adminform
+- [F] Added success & delete messages
+
 ### 0.8 090313
 - [N] Added GoRatinglist
 
