@@ -20,6 +20,7 @@ ToDo
         
 ### Backend
 - Add delete option to ratinglist
+- Merge [GoRegister](https://github.com/DeeFi/GoRegister/),[GoRatinglist](https://github.com/DeeFi/GoRatinglist/), GoTournament
 
 Anmerkung
 ---------
