@@ -10,6 +10,8 @@
 	$plugin_tx['GoRegister']['eingabe_zuruecksetzen']="Zurücksetzen";
 	$plugin_tx['GoRegister']['eingabe_senden']="Senden";
 	$plugin_tx['GoRegister']['eingabe_ungueltig']=" ungültig";
+	$plugin_tx['GoRegister']['eingabe_erfolgreich']=" wurde erfolgreich hinzugefügt.";
+	$plugin_tx['GoRegister']['loeschen_erfolgreich']=" wurde erfolgreich gelöscht.";
 	$plugin_tx['GoRegister']['land_at']="Österreich";
 	$plugin_tx['GoRegister']['flag_at']="at.gif";
 	$plugin_tx['GoRegister']['land_be']="Belgien";

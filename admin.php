@@ -1,5 +1,5 @@
 <?php
-/* TODO: Add a message: "player XYZ successfully add to list"*/
+
 function GoRegister_makeTextfield($name, $desc, $val){
     if(isset($_POST[$name]))
         $val = stripslashes(htmlentities($_POST[$name], ENT_QUOTES)); // Wert für die Nachricht!
@@ -13,15 +13,16 @@ function GoRegister_makeTextfield($name, $desc, $val){
         $d .= "onkeyup=\"getData();\" onblur=\"document.getElementById('divHelp').style.display = 'none';void();\" "; 
     } 
 
-    $d .= "type=\"text\" name=\"".$name."\" id=\"".$name."\" size=\"24\" maxlength=\"64\"></td>\n";
+    $d .= "type=\"text\" name=\"".$name."\" id=\"".$name."\" size=\"24\" maxlength=\"64\" required></td>\n";
     $d .= "</tr>\n";
     return $d;
 }
 
 function GoRegister_makeRangSelect($name,$desc) {
-    $d = "<th><label for=".$name.">".$desc.":</label></th>\n";
-    $d .= "<td>\n";
-    $d .= "<select name=".$name." id=".$name.">\n";
+    $d = '<th><label for='.$name.'>'.$desc.':</label></th>
+            <td>
+            <select name='.$name.' id='.$name.' required>
+            <option selected value=""> auswählen </option>';
     for ($i = 9; $i > 0; $i--) {
         $str = $i . "d";
         /*if(isset($_POST[$name]) AND $str == $_POST[$name])
@@ -140,19 +141,25 @@ function GoRegister_admin_formular_ausgabe($csvfile)
     //Pfad zu Stammverzeichnis
     Global $plugin_pth;
 
-    // Wenn Name gesetzt ist, wurde ein neuer Beitrag gesetzt, und es soll nichts gelöscht werden!
-    if (!isset($_POST['name']))
-    {
-        if ($_GET['deleteid'])
-        {
-            $o .= GoRegister_delete_row_in_csv();
-        }
-    }
+    Global $delimiter;
 
     GoRegister_include_getdata_js_css();
 
+    // Wenn kein Name gesetzt ist, kann ein Eintrag gelöscht werden
+    if (!isset($_POST['last_name'])) {
+        if ($_GET['deleteid']) {
+            $o .= GoRegister_delete_row_in_csv(); // Lösche gewählten Eintrag
+        }
+    } 
+    elseif (isset($_POST['name']) && isset($_POST['last_name']) && isset($_POST['strength']) ) {
+        $o .= '<div class="alert alert-success">
+                <strong>'.$_POST['name'] .' '. $_POST['last_name'] .' '. $_POST['strength'] .'</strong>'. $plugin_tx['GoRegister']['eingabe_erfolgreich'].'
+                </div>';
+    }
 
-    $o .= '<h2>Vorangemeldete Spieler</h2>' . "\n";
+
+    $o .= '<h2>Vorangemeldete Spieler</h2>
+            <p><b>Aktuelle Liste: ' . $csvfile . '</b></p>' . "\n";
     
     //Beginn des Outputs.
     $o .=   '<!-- Beginn of Anmeldeliste Output -->
@@ -172,16 +179,16 @@ function GoRegister_admin_formular_ausgabe($csvfile)
     $datei = fopen($plugin_pth . $csvfile,"r");
     
     // Alles einlesen
-    while (($data = fgetcsv ($datei, 1000, "|")) !== false ) 
-    {
+    while (($data = fgetcsv($datei, 1000, $delimiter)) !== false ) {
         $csv[] = $data;
     }
+
     fclose ($datei);
     
     //Ausgabe der CSV
     $count = 1;
-    foreach ($csv as $row) 
-    {
+
+    foreach ($csv as $row) {
         // Count= ID-Zähler, [0] = Name, [1] = Vorname, [2] = Rang, [3] = Stadt, [4] = Land
         $o .= '<tr> 
                 <td>' .$count. '</td>
@@ -196,6 +203,7 @@ function GoRegister_admin_formular_ausgabe($csvfile)
                 </tr>'. "\n"; 
         $count = $count+1;
     }   
+
     $o .=   '</table>
             <!-- END of Anmeldeliste Output -->
             <br />
@@ -276,6 +284,8 @@ function GoRegister_readCSVFile()
 function GoRegister_delete_row_in_csv()
 {
     Global $plugin_pth;
+    Global $plugin_tx;
+    Global $delimiter;
 
     $filename_old = GoRegister_readCSVFile();
     $filename_new = $filename_old.'.tmp';
@@ -292,11 +302,16 @@ function GoRegister_delete_row_in_csv()
     }
 
     $handler = fopen($new_file, 'w+');
-    foreach ($csv_in_array as $fields) 
-    {
-        if ($delete_row != $count) 
-        {
-            fputcsv($handler, $fields, '|');
+
+    foreach ($csv_in_array as $fields) {
+        if ($delete_row != $count) {
+            fputcsv($handler, $fields, $delimiter);
+        }
+        else {
+            $delete = $fields; // Speicher den zu löschenden Eintrag in einem Array
+            $delete = '<div class="alert alert-success">
+                    <strong>'.$delete['Vorname'] .' '. $delete['Name'] .' '. $delete['Rang'] .'</strong>'. $plugin_tx['GoRegister']['loeschen_erfolgreich'].'
+                    </div>';
         }
         $count++; 
     }
@@ -304,6 +319,7 @@ function GoRegister_delete_row_in_csv()
     fclose($handler);
     unlink($old_file);
     rename($new_file,$old_file);
+    return $delete;
 }
 
  
@@ -424,7 +440,6 @@ if(isset($GoRegister))
                     </form>';
             break;
         case '':    // Ausgabe der aktuell betrachteten Listendatei (zur Orientierung).
-            $o .= '<br/><b>Aktuelle Liste: ' . $csvfile . '</b>' . "\n";
             if ($csvfile == "ratinglist.csv") {
                 $o .= ratinglist();
 
