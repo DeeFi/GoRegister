@@ -1,15 +1,16 @@
 Plugin für CMSimple
 ===================
-GoRegister, Version 0.7.2
+GoRegister, Version 0.8
 
 Funktionen
 ----------
 
 ### Frontend
-- Ausgabe durch: `#CMSimple $output.= anmelde_ausgabe("dateiname.csv");#`
+- GoRegister: Ausgabe durch: `#CMSimple $output.= GoRegister_Ausgabe("dateiname.csv");#`
+- GoRatinglist: Verwaltung einer Liste von Spielern, deren Namen in einer Ratingliste ausgegeben werden soll. Ausgabe durch: `#CMSimple $output.= ratinglist();#`
 
 ### Backend
-- Ausgabe im Backend durch die Auswahl des Menüpunktes "Csv_Ausgabe"
+- Ausgabe im Backend durch die Auswahl des Menüpunktes "GoRegister"
 - Hinzufügen neuer Daten im Backend. Daten werden fortlaufend in die CSV Datei eingetragen. Es findet keine Sortierung statt.
 
 ToDo
@@ -18,7 +19,7 @@ ToDo
 - Nothing yet
         
 ### Backend
-- Nothing yet
+- Add delete option to ratinglist
 
 Anmerkung
 ---------

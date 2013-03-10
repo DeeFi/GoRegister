@@ -1,4 +1,20 @@
 <?php
+
+$delimiter = '|';
+
+function GoRegister_get_pth_to_plugin() {
+    //Pfad zu Stammverzeichnis
+    Global $pth;
+
+    $plugin = basename(dirname(__FILE__),"/");
+    $plugin_pth = $pth['folder']['plugins'].$plugin.'/';
+
+    return $plugin_pth;
+}
+
+$plugin_pth = GoRegister_get_pth_to_plugin();
+
+
 function sortmddata($array, $by, $order = 'ASC', $type = 'STRING') {
     // $array  - Zu sortierendes Multidimensionales Array
     // $by - Spalte nach der Sortiert werden soll
@@ -126,5 +142,148 @@ function anmelde_ausgabe($cvsdatei = 'datei.csv') {
     //Ausgabe weitergeben
     return $o;
 }
+
+/**
+ * Plugin GoRatingliste
+ */
+
+/**
+ * Convert a comma separated file into an associated array.
+ *
+ * Script based on: 
+ * @link http://gist.github.com/385876
+ */
+
+
+function GoRegister_csv_to_array($filename) {
+
+    Global $plugin_pth;
+    Global $delimiter;
+
+    // Überprüfe ob die Datei existiert
+    if(!file_exists($filename) || !is_readable($filename))
+        return FALSE;
+    
+    $data = array();
+
+    // Überprüfe den Fall "Ratingliste" / "Sonstige" und baue dann ein Array aus der csv
+    if (($handle = fopen($filename, 'r')) !== FALSE) {
+        switch ($filename) {
+            case $plugin_pth.'ratinglist.csv':  // 1. Ratingliste
+                $header = array("ID");
+                while (($row = fgetcsv($handle, 1000)) !== FALSE) {
+                    $data[] = array_combine($header, $row);
+                }
+                break;
+            default:                            // 2. Sonstige = Anmeldeliste
+                $header = array("Name", "Vorname", "Rang", "Stadt", "Land");
+                while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
+                    $data[] = array_combine($header, $row);
+                }
+        }
+        fclose($handle);
+    }
+    return $data;
+}
+
+
+function ratinglist() {
+
+    Global $plugin_tx;
+    Global $plugin_pth;
+
+    $filename = $plugin_pth."ratinglist.csv";    
+
+    $id = GoRegister_csv_to_array($filename);
+
+    $i = 0; // Zähler für die folgende Schleife
+
+    foreach ($id as $spieler) {
+
+        $url = "http://www.europeangodatabase.eu/EGD/GetPlayerDataByPIN.php?pin=".$spieler['ID'];
+        $data = file_get_contents($url);
+
+        $save = json_decode($data,true); //Dekodiere EGD JSON-String zu einem Array
+
+        /**
+         * Aufbau des JSON-Array
+         * [Pin_Player] - ID des Spielers in der Datenbank
+         * [AGAID] - Falls vorhanden, ID in der AGA-Datenbank
+         * [Last_Name] - Nachname
+         * [Name] - Vorname
+         * [Country_Code] - Land, zweistelliger Code
+         * [Club] - Code des Clubs (zwei bis vierstellig)
+         * [Grade] - Rang (20k-8d)
+         * [Grade_n] - (Nummerische Speicherung des Rangs, aufsteigend
+         * [EGF_Placement] - Platzierung in der Datenbank
+         * [Gor] - Rating
+         * [DGor] - ???
+         * [Proposed_Grade] - Vorgeschlagener Rang (bei großen Abweichungen vom Rating)
+         * [Tot_Tournaments] - Anzahl der gespielten Turniere
+         * [Last_Appearance] - Code des letzten Turniers
+         * [Elab_Date] - ???
+         * [Hidden_History] -
+         * [Real_Last_Name] - Nachname
+         * [Real_Name] - Vorname
+         */
+
+        $daten[$i][0] = $save[Name];
+        $daten[$i][1] = $save[Last_Name];
+        $daten[$i][2] = $save[Gor];
+        $daten[$i][3] = $save[Grade];
+        $daten[$i][4] = $save[Tot_Tournaments];
+        $daten[$i][5] = $save[Pin_Player];
+        $i++;
+    }
+
+    //Sortiere die Daten absteigend nach Gor
+    foreach ($daten as $key => $row) {
+        $Gor[$key] = $row[2];
+    }
+    array_multisort($Gor, SORT_DESC, $daten);
+
+    $output = '<table id="ratinglist">
+                <thead>
+                    <tr>
+                        <th>Rang</th>
+                        <th>Vorname</th>
+                        <th>Name</th>
+                        <th>Rating</th>
+                        <th>Rang</th>
+                        <th>Turniere</th>
+                    </tr>
+                </thead>
+                <tbody>';
+
+    //Ausgabe der sortieren Liste
+    $rank = 1;
+    foreach ($daten as $key => $value) {
+
+        if($rank % 2 == 0) {
+            $zebra = 'even';
+        }
+        else {
+            $zebra = 'odd';
+        }
+
+        $output .= '<tr class="'.$zebra.'">';
+        $output .= '<td class="id">' .$rank. '</td>';
+        $output .= '<td>' .$value[0]. '</td>';
+        $output .= '<td>' .$value[1]. '</td>';
+        $output .= '<td>' .$value[2]. '</td>';
+        $output .= '<td>' .$value[3]. '</td>';
+        $output .= '<td>' .$value[4]. '</td>';
+        $output .= '</tr>';
+        $rank++;
+    }
+    $output .= '</tbody>';
+    $output .= '</table>';
+
+    return $output;
+}
+
+
+
+
 ?>
 

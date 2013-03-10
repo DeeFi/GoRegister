@@ -1,5 +1,8 @@
 Changelog
 ---------
+### 0.8 090313
+- [N] Added GoRatinglist
+
 ### 0.7.3. 090313
 - [F] several code improvements
 

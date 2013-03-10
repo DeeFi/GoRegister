@@ -1,20 +1,8 @@
 <?php
-function GoRegister_get_pth_to_plugin() {
-    //Pfad zu Stammverzeichnis
-    Global $pth;
-
-    $plugin = basename(dirname(__FILE__),"/");
-    $plugin_pth = $pth['folder']['plugins'].$plugin.'/';
-
-    return $plugin_pth;
-}
-
-$plugin_pth = GoRegister_get_pth_to_plugin();
-
-
+/* TODO: Add a message: "player XYZ successfully add to list"*/
 function GoRegister_makeTextfield($name, $desc, $val){
     if(isset($_POST[$name]))
-        $val = stripslashes(htmlentities($_POST[$name], ENT_QUOTES));
+        $val = stripslashes(htmlentities($_POST[$name], ENT_QUOTES)); // Wert für die Nachricht!
     $d = "<tr>\n";
     $d .= "<th><label for=".$name.">" .$desc.":</label></th>\n";
     $d .= "<td><input "; 
@@ -25,7 +13,7 @@ function GoRegister_makeTextfield($name, $desc, $val){
         $d .= "onkeyup=\"getData();\" onblur=\"document.getElementById('divHelp').style.display = 'none';void();\" "; 
     } 
 
-    $d .= "type=\"text\" name=\"".$name."\" id=\"".$name."\" size=\"24\" maxlength=\"64\" value=\"".$val."\"/></td>\n";
+    $d .= "type=\"text\" name=\"".$name."\" id=\"".$name."\" size=\"24\" maxlength=\"64\"></td>\n";
     $d .= "</tr>\n";
     return $d;
 }
@@ -36,16 +24,18 @@ function GoRegister_makeRangSelect($name,$desc) {
     $d .= "<select name=".$name." id=".$name.">\n";
     for ($i = 9; $i > 0; $i--) {
         $str = $i . "d";
-        if(isset($_POST[$name]) AND $str == $_POST[$name])
-        $d .= "<option selected=\"selected\">".$str."</option>\r\n";
+        /*if(isset($_POST[$name]) AND $str == $_POST[$name])
+            $d .= "<option selected=\"selected\">".$str."</option>\r\n";
         else
-        $d .= "<option>".$str."</option>\r\n";
+            $d .= "<option>".$str."</option>\r\n";*/
+            $d .= "<option>".$str."</option>\r\n";
     }
     for ($i = 1; $i <= 30; $i++){
         $str = $i . "k";
-        if(isset($_POST[$name]) AND $str == $_POST[$name])
+        /*if(isset($_POST[$name]) AND $str == $_POST[$name])
             $d .= "<option selected=\"selected\">".$str."</option>\r\n";
         else
+            $d .= "<option>".$str."</option>\r\n";*/
             $d .= "<option>".$str."</option>\r\n";
     }
     return $d;
@@ -76,6 +66,69 @@ function GoRegister_include_getdata_js_css()
     }
 }
 
+function GoRegister_Administer($csvfile) {
+    // Sprache, Pfad, Delimiter
+    Global $plugin_tx;
+    Global $plugin_pth;
+    Global $delimiter;
+
+    
+    if (isset($_POST["buttonSubmit"]) && $_POST["buttonSubmit"] == "Senden")
+    {
+        //Eingabe, falls vorhanden, prüfen
+        // Fehlerarray:
+        $errors = array();
+        // Eingabevariablen:
+        $name = ""; $vorname = ""; $rang = ""; $stadt = ""; $land = "";  
+        $keineDaten = true;
+        // Eingaben konvertieren.
+        $name = $_POST["last_name"];
+        $vorname = $_POST["name"];
+        $rang = $_POST["strength"];
+        $stadt = $_POST["club"];
+        $land = $_POST["country"];    
+        // Eingaben prüfen.
+        GoRegister_checkStringInput($name, $plugin_tx['GoRegister']['ausgabe_name'], $errors, $plugin_tx);
+        GoRegister_checkStringInput($vorname, $plugin_tx['GoRegister']['ausgabe_vorname'], $errors, $plugin_tx);
+        GoRegister_checkStringInput($vorname, $plugin_tx['GoRegister']['ausgabe_rang'], $errors, $plugin_tx);
+        GoRegister_checkStringInput($stadt, $plugin_tx['GoRegister']['ausgabe_stadt'], $errors, $plugin_tx);
+        GoRegister_checkStringInput($land, $plugin_tx['GoRegister']['ausgabe_land'], $errors, $plugin_tx);        
+        $land = strtolower($land);                    
+        $keineDaten = false;
+        
+        // CSV Datei öffenen und eingegebene Daten eintragen  ...
+        if($keineDaten == false AND count($errors) == 0)
+        {
+            //Öffne die Datei mit Lese- und Schreibrechten, platziere den Zeiger am Ende der Datei 
+            $fp = fopen($plugin_pth . $csvfile, 'a+');
+
+            //Generierung des Eintrags in die CSV Datei.
+            $list = array ($name, $vorname, $rang, $stadt, $land);
+            //Eintragen in die Datei und schließen!
+            fputcsv($fp, $list, $delimiter); 
+            fclose($fp);
+        }
+        else 
+        {
+            // Fehlerausgabe-Anfang
+            if($keineDaten == false AND count($errors) > 0)
+            {
+                $output .= 'Fehler <br />
+                            <ul>';
+                            foreach($errors as $error)
+                                $output .=  '<li>' . $error . '</li>';               
+                $output .=  '</ul>'; 
+            }       
+        }
+        $inhalt .= GoRegister_admin_formular_ausgabe($csvfile); 
+    }
+    else 
+    {    
+        $inhalt .= GoRegister_admin_formular_ausgabe($csvfile);
+    }
+    $output .= $inhalt;
+    return $output;
+}
 
 
 function GoRegister_admin_formular_ausgabe($csvfile) 
@@ -143,7 +196,7 @@ function GoRegister_admin_formular_ausgabe($csvfile)
                 </tr>'. "\n"; 
         $count = $count+1;
     }   
-    $o .=   '</table
+    $o .=   '</table>
             <!-- END of Anmeldeliste Output -->
             <br />
             <h4>Neue Daten Eingeben</h4>' . "\n";
@@ -193,75 +246,9 @@ function GoRegister_admin_formular_ausgabe($csvfile)
 }
 
 
-function GoRegister_admin_GoRegister($csvfile) {
-    // Aufrufen der Sprach-Dateien
-    GLOBAL $plugin_tx;
-
-    Global $plugin_pth;
-
-    
-    if (isset($_POST["buttonSubmit"]) && $_POST["buttonSubmit"] == "Senden")
-    {
-        //Eingabe, falls vorhanden, prüfen
-        // Fehlerarray:
-        $errors = array();
-        // Eingabevariablen:
-        $name = ""; $vorname = ""; $rang = ""; $stadt = ""; $land = "";  
-        $keineDaten = true;
-        // Eingaben konvertieren.
-        $name = $_POST["last_name"];
-        $vorname = $_POST["name"];
-        $rang = $_POST["strength"];
-        $stadt = $_POST["club"];
-        $land = $_POST["country"];    
-        // Eingaben prüfen.
-        GoRegister_checkStringInput($name, $plugin_tx['GoRegister']['ausgabe_name'], $errors, $plugin_tx);
-        GoRegister_checkStringInput($vorname, $plugin_tx['GoRegister']['ausgabe_vorname'], $errors, $plugin_tx);
-        GoRegister_checkStringInput($vorname, $plugin_tx['GoRegister']['ausgabe_rang'], $errors, $plugin_tx);
-        GoRegister_checkStringInput($stadt, $plugin_tx['GoRegister']['ausgabe_stadt'], $errors, $plugin_tx);
-        GoRegister_checkStringInput($land, $plugin_tx['GoRegister']['ausgabe_land'], $errors, $plugin_tx);        
-        $land = strtolower($land);                    
-        $keineDaten = false;
-        
-        // CSV Datei öffenen und eingegebene Daten eintragen  ...
-        if($keineDaten == false AND count($errors) == 0)
-        {
-            //Öffne die Datei mit Lese- und Schreibrechten, platziere den Zeiger am Ende der Datei 
-            $fp = fopen($plugin_pth . $csvfile, 'a+');
-
-            //Generierung des Eintrags in die CSV Datei.
-            $list = array ($name, $vorname, $rang, $stadt, $land);
-            //Eintragen in die Datei und schließen!
-            fputcsv($fp, $list, '|'); 
-            fclose($fp);
-        }
-        else 
-        {
-            // Fehlerausgabe-Anfang
-            if($keineDaten == false AND count($errors) > 0)
-            {
-                $o .= 'Fehler <br />'."\n";
-                $o .=  '<ul>'."\n";
-                    foreach($errors as $error)
-                        $o .=  '<li>' . $error . '<li>'."\n";               
-                $o .=  '<ul>'."\n"; 
-            }       
-        }
-        $inhalt = GoRegister_admin_formular_ausgabe($csvfile); 
-    }
-    else 
-    {    
-        $inhalt = GoRegister_admin_formular_ausgabe($csvfile);
-    }
-    $o .= $inhalt;
-    return $o;
-}  //End of admin_GoRegister()
-
-/*
+/**
  * Liest den Namen der CSV-Datei ein. Dieser wird in einer Datei "settings.dat" abgespeichert.
  * 
- * Autor: Mathias Neumann (http://www.maneumann.com)
- * 20.03.2010
  */
 function GoRegister_readCSVFile()
 {
@@ -283,38 +270,7 @@ function GoRegister_readCSVFile()
     return "datei.csv";
 }
 
-/**
- * Convert a comma separated file into an associated array.
- * @author Dennis Fischer
- * 
- * @param string $filename Path to the CSV file
- * @return array
- * Script based on: 
- * @link http://gist.github.com/385876
- */
 
-function GoRegister_csv_to_array($filename='')
-{
-    Global $plugin_pth;
-
-    $filename = $plugin_pth.GoRegister_readCSVFile();
-
-    $delimiter = '|';
-    if(!file_exists($filename) || !is_readable($filename))
-        return FALSE;
-    
-    $header = array("Name", "Vorname", "Rang", "Stadt", "Land");
-    $data = array();
-    if (($handle = fopen($filename, 'r')) !== FALSE)
-    {
-        while (($row = fgetcsv($handle, 1000, $delimiter)) !== FALSE)
-        {
-            $data[] = array_combine($header, $row);
-        }
-        fclose($handle);
-    }
-    return $data;
-}
 
 
 function GoRegister_delete_row_in_csv()
@@ -326,16 +282,16 @@ function GoRegister_delete_row_in_csv()
 
     $old_file = $plugin_pth.$filename_old;
     $new_file = $plugin_pth.$filename_new;
-    $handler = fopen($new_file, 'w+');
-
-    $csv_in_array = GoRegister_csv_to_array();
-
+    
+    $csv_in_array = GoRegister_csv_to_array($old_file);
+    
     if(isset($_GET['deleteid']))
     {
         $delete_row = $_GET['deleteid'];
         $count = 1;
     }
 
+    $handler = fopen($new_file, 'w+');
     foreach ($csv_in_array as $fields) 
     {
         if ($delete_row != $count) 
@@ -351,10 +307,8 @@ function GoRegister_delete_row_in_csv()
 }
 
  
-/*
+/**
  * Schreibt den Namen der CSV-Datei in die Datei "settings.dat".
- * 
- * Autor: Mathias Neumann (http://www.maneumann.com)
  * 
  */
 function GoRegister_writeCSVFile($filename)
@@ -371,12 +325,12 @@ function GoRegister_writeCSVFile($filename)
     return $o;
 }
 
-/*
+
+/**
  * Erstellt eine ComboBox fuer die Auswahl der CSV-Datei.
  * 
- * Autor: Mathias Neumann (http://www.maneumann.com)
- * 20.03.2010
  */
+
 function GoRegister_makeFileChooser($name, $desc, $val)
 {
     //Pfad zu Stammverzeichnis
@@ -409,13 +363,12 @@ function GoRegister_makeFileChooser($name, $desc, $val)
     return $o;
 }
 
-/*
- * Angepasst von Mathias Neumann (http://www.maneumann.com)
+
+/**
+ * Auswahl einer CSV-Datei in der Admin-Oberfläche
  *
- * - Auswahl einer CSV-Datei in der Admin-Oberfläche
- *
- * 20.03.2010
  */
+
 if(isset($GoRegister))
 {
     //Pfad zu Stammverzeichnis
@@ -432,51 +385,55 @@ if(isset($GoRegister))
     
     // Check for csv-file.
     if(!isset($_POST["CSVfile"]) OR strlen(trim($_POST["CSVfile"])) == 0)
-        $cvsfile = GoRegister_readCSVFile();
+        $csvfile = GoRegister_readCSVFile();
     else
     { 
         if(file_exists($plugin_pth . trim($_POST["CSVfile"])))
         {
-            $cvsfile = trim($_POST["CSVfile"]);
-            //$o .= '<br/><i>Gewaehlte Eingabedatei "' . $cvsfile . '".</i><br/>' . "\n";
+            $csvfile = trim($_POST["CSVfile"]);
+            //$o .= '<br/><i>Gewaehlte Eingabedatei "' . $csvfile . '".</i><br/>' . "\n";
             // Store file.
-            $o .= GoRegister_writeCSVFile($cvsfile, $o);
+            $o .= GoRegister_writeCSVFile($csvfile, $o);
         }
         else
         {           
             // Read back old value.
-            $cvsfile = GoRegister_readCSVFile();
-            $o .= '<br/><i style="color: red; font-size: 120%;">Gewaehlte Eingabedatei "' . trim($_POST["CSVfile"]) . '" existiert nicht. Wähle alte Datei "' . $cvsfile . '".</i><br/>' . "\n";
+            $csvfile = GoRegister_readCSVFile();
+            $o .= '<br/><i style="color: red; font-size: 120%;">Gewaehlte Eingabedatei "' . trim($_POST["CSVfile"]) . '" existiert nicht. Wähle alte Datei "' . $csvfile . '".</i><br/>' . "\n";
         }
         
         // Remove value from $_POST to avoid showing the invalid value.
         unset($_POST['CSVfile']);
     }
     
-    if($admin=='') 
-    {
-        // Ausgabe der aktuell betrachteten Listendatei (zur Orientierung).
-        $o .= '<br/><b>Aktuelle Liste: ' . $cvsfile . '</b>' . "\n";
-        
-        $o .= GoRegister_admin_GoRegister($cvsfile);
+
+    switch ($admin) {
+        case 'plugin_main':
+            $o .= '<br/>
+                    <h4>Quelldatei angeben</h4>
+                    <form action="' . htmlspecialchars($_SERVER['REQUEST_URI']) . '" method="post">
+                    <table width="50%" border="1" cellpadding="4" cellspacing="0">';     
+            $o .= GoRegister_makeFileChooser("CSVfile", "CSV-Eingabedatei", $csvfile); 
+            $o .= '<tr>
+                    <td colspan="2" align="right">
+                    <input type="submit" value="'.$plugin_tx['GoRegister']['eingabe_senden'].'" name="buttonSubmit"/>
+                    <input type="reset" value="'.$plugin_tx['GoRegister']['eingabe_zuruecksetzen'].'" name="buttonReset"/>
+                    </td>
+                    </tr>
+                    </table>
+                    </form>';
+            break;
+        case '':    // Ausgabe der aktuell betrachteten Listendatei (zur Orientierung).
+            $o .= '<br/><b>Aktuelle Liste: ' . $csvfile . '</b>' . "\n";
+            if ($csvfile == "ratinglist.csv") {
+                $o .= ratinglist();
+
+            } else {
+                $o .= GoRegister_Administer($csvfile);
+            }
+            break;
     }
- 
- 
-    if ($admin == 'plugin_main')
-    {
-        $o .= '<br/>
-                <h4>Quelldatei angeben<h4>
-                <form action="' . htmlspecialchars($_SERVER['REQUEST_URI']) . '" method="post">
-                <table width="50%" border="1" cellpadding="4" cellspacing="0">';     
-        $o .= GoRegister_makeFileChooser("CSVfile", "CSV-Eingabedatei:", $cvsfile); 
-        $o .= '<tr>
-                <td colspan="2" align="right">
-                <input type="submit" value="'.$plugin_tx['GoRegister']['eingabe_senden'].'" name="buttonSubmit"/>
-                <input type="reset" value="'.$plugin_tx['GoRegister']['eingabe_zuruecksetzen'].'" name="buttonReset"/>
-                </td>
-                </tr>
-                </table>
-                $</form>'."\n";
-    }
+
 }
+
 ?>
