@@ -143,6 +143,7 @@ function GoRegister_admin_formular_ausgabe($csvfile)
 
     Global $delimiter;
 
+
     GoRegister_include_getdata_js_css();
 
     // Wenn kein Name gesetzt ist, kann ein Eintrag gelöscht werden
@@ -178,10 +179,11 @@ function GoRegister_admin_formular_ausgabe($csvfile)
             <!-- END of Neue Daten Eingeben-->
             <br />';
 
-
     // Ausgabe der Liste der Vorangemeldeten Spieler
     $o .= '<h2>Vorangemeldete Spieler</h2>
             <p><b>Aktuelle Liste: ' . $csvfile . '</b></p>' . "\n";
+    
+    //Beginn des Outputs.
     $o .=   '<!-- Beginn of Anmeldeliste Output -->
             <table width="100%" border="1" cellpadding="4" cellspacing="0">
             <tr>
@@ -224,7 +226,9 @@ function GoRegister_admin_formular_ausgabe($csvfile)
                 <!-- END of Anmeldeliste Output -->';
         $count = $count+1;
     }
+
     $o .= '</table>';
+
 
 
     // TODO: Design Anpassen!
@@ -302,7 +306,9 @@ function GoRegister_delete_row_in_csv()
             fputcsv($handler, $fields, $delimiter);
         }
         else {
+
             $delete = $fields; // Speicher den zu löschenden Eintrag in einem Array und geb eine Meldung aus, das löschen erfolgreich war.
+
             $delete = '<div class="alert alert-success">
                     <strong>'.$delete['Vorname'] .' '. $delete['Name'] .' '. $delete['Rang'] .'</strong>'. $plugin_tx['GoRegister']['loeschen_erfolgreich'].'
                     </div>';
