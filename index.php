@@ -74,7 +74,7 @@ function anmelde_ausgabe($cvsdatei = 'datei.csv') {
     $datei = fopen($plugin_pth . $cvsdatei,"r");
 
     // Alles einlesen
-    while (($data = fgetcsv ($datei, 1000, "|")) !== false ) {
+    while (($data = fgetcsv ($datei, 1000, $delimiter)) !== false ) {
         $csv[] = $data;
     }
     fclose ($datei);
