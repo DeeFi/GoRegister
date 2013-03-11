@@ -158,12 +158,32 @@ function GoRegister_admin_formular_ausgabe($csvfile)
     }
 
 
+    //Formular für neue Daten
+    $o .=   '<h2>Neue Daten Eingeben</h2>
+            <form action="'.$_GET['admin'].'" method="post">
+            <table width="50%" border="1" cellpadding="4" cellspacing="0">';
+    $o .=   GoRegister_makeTextfield("last_name",$plugin_tx['GoRegister']['ausgabe_name'], "");
+    $o .=   GoRegister_makeTextfield("name",$plugin_tx['GoRegister']['ausgabe_vorname'], "");
+    $o .=   GoRegister_makeRangSelect("strength",$plugin_tx['GoRegister']['ausgabe_rang']);
+    $o .=   GoRegister_makeTextfield("club",$plugin_tx['GoRegister']['ausgabe_stadt'], "");
+    $o .=   GoRegister_makeTextfield("country",$plugin_tx['GoRegister']['ausgabe_land'], "");
+    $o .=   '<tr>
+            <td colspan="2" align="right">
+            <input type="submit" value="'.$plugin_tx['GoRegister']['eingabe_senden'].'" name="buttonSubmit"/>
+            <input type="reset" value="'.$plugin_tx['GoRegister']['eingabe_zuruecksetzen'].'" name="buttonReset"/>
+            </td>
+            </tr>
+            </table>
+            </form>
+            <!-- END of Neue Daten Eingeben-->
+            <br />';
+
+
+    // Ausgabe der Liste der Vorangemeldeten Spieler
     $o .= '<h2>Vorangemeldete Spieler</h2>
             <p><b>Aktuelle Liste: ' . $csvfile . '</b></p>' . "\n";
-    
-    //Beginn des Outputs.
     $o .=   '<!-- Beginn of Anmeldeliste Output -->
-            <table width="100%" border="1" cellpadding="4" cellspacing="0">   
+            <table width="100%" border="1" cellpadding="4" cellspacing="0">
             <tr>
             <th>' .$plugin_tx['GoRegister']['ausgabe_id']. '</th>
             <th>' .$plugin_tx['GoRegister']['ausgabe_name']. '</th>
@@ -172,7 +192,7 @@ function GoRegister_admin_formular_ausgabe($csvfile)
             <th>' .$plugin_tx['GoRegister']['ausgabe_stadt']. '</th>
             <th>' .$plugin_tx['GoRegister']['ausgabe_land']. '</th>
             <th>' .$plugin_tx['GoRegister']['ausgabe_loeschen']. '</th>
-            </tr>'. "\n"; 
+            </tr>'. "\n";
 
     //öffnen der Datei
 
@@ -200,41 +220,17 @@ function GoRegister_admin_formular_ausgabe($csvfile)
         $state = $row[4];
         $o .= '<td><img src="'.$plugin_pth.'img/flag/'.$plugin_tx['GoRegister']['flag_'.$state].'" /> ' .$plugin_tx['GoRegister']['land_'.$state]. '</td>
                 <td><a href="?'.$su.'&deleteid='.$count.'">Löschen</td>
-                </tr>'. "\n"; 
+                </tr>
+                <!-- END of Anmeldeliste Output -->';
         $count = $count+1;
-    }   
-
-    $o .=   '</table>
-            <!-- END of Anmeldeliste Output -->
-            <br />
-            <h4>Neue Daten Eingeben</h4>' . "\n";
-
-    //Formular für neue Daten
-    $o .=   '<!-- Beginn of Neue Daten Eingeben -->
-            <form action="'.$_GET['admin'].'" method="post">
-            <table width="50%" border="1" cellpadding="4" cellspacing="0">';       
-    $o .=   GoRegister_makeTextfield("last_name",$plugin_tx['GoRegister']['ausgabe_name'], ""); 
-    $o .=   GoRegister_makeTextfield("name",$plugin_tx['GoRegister']['ausgabe_vorname'], "");
-    $o .=   GoRegister_makeRangSelect("strength",$plugin_tx['GoRegister']['ausgabe_rang']);
-    $o .=   GoRegister_makeTextfield("club",$plugin_tx['GoRegister']['ausgabe_stadt'], "");
-    $o .=   GoRegister_makeTextfield("country",$plugin_tx['GoRegister']['ausgabe_land'], "");
-    $o .=   '<tr>
-            <td colspan="2" align="right">
-            <input type="submit" value="'.$plugin_tx['GoRegister']['eingabe_senden'].'" name="buttonSubmit"/>
-            <input type="reset" value="'.$plugin_tx['GoRegister']['eingabe_zuruecksetzen'].'" name="buttonReset"/> 
-            </td>
-            </tr>
-            </table>
-            </form>
-            <!-- END of Neue Daten Eingeben-->
-            <br />
-            <br />'; // Todo: Reset funktioniert nicht!
+    }
+    $o .= '</table>';
 
 
     // TODO: Design Anpassen!
     $o .=  '<div id="divHelp">
                 <h3>Neuen Spieler auswählen</h3>
-                <img id="imgHelpExit" src=" '. $plugin_pth .'img/calx.gif" onclick="document.getElementById(\'divHelp\').style.display = \'none\';"> 
+                <img id="imgHelpExit" src=" '. $plugin_pth .'img/calx.gif" onclick="document.getElementById(\'divHelp\').style.display = \'none\';">
                 <form id="helpForm_last_name">
                     <table id="helpTable_header">
                         <tr>
@@ -244,7 +240,7 @@ function GoRegister_admin_formular_ausgabe($csvfile)
                             <th class="country">'. $plugin_tx['GoRegister']['ausgabe_land'] .'</th>
                             <th class="rank">'. $plugin_tx['GoRegister']['ausgabe_rang'] .'</th>
                         </tr>
-                    </table>                
+                    </table>
                     <table id="helpTable_last_name" name="helpTable_last_name" class="aForm_helpTables">
                     </table>
                 </form>
@@ -258,14 +254,12 @@ function GoRegister_admin_formular_ausgabe($csvfile)
  * Liest den Namen der CSV-Datei ein. Dieser wird in einer Datei "settings.dat" abgespeichert.
  * 
  */
-function GoRegister_readCSVFile()
-{
+function GoRegister_readCSVFile() {
     //Pfad zu Stammverzeichnis
     Global $plugin_pth;
 
     $settingsfile = $plugin_pth . "settings.dat";
-    if(file_exists($settingsfile))
-    {
+    if(file_exists($settingsfile)) {
         $file = fopen($settingsfile, 'r');
         $filename = trim(fgets($file));
         fclose($file);
@@ -278,9 +272,10 @@ function GoRegister_readCSVFile()
     return "datei.csv";
 }
 
-
-
-
+/**
+ * Lösche einen Eintrag in der CSV-Datei
+ * 
+ */
 function GoRegister_delete_row_in_csv()
 {
     Global $plugin_pth;
@@ -292,11 +287,10 @@ function GoRegister_delete_row_in_csv()
 
     $old_file = $plugin_pth.$filename_old;
     $new_file = $plugin_pth.$filename_new;
-    
+
     $csv_in_array = GoRegister_csv_to_array($old_file);
-    
-    if(isset($_GET['deleteid']))
-    {
+
+    if(isset($_GET['deleteid'])) {
         $delete_row = $_GET['deleteid'];
         $count = 1;
     }
@@ -308,7 +302,7 @@ function GoRegister_delete_row_in_csv()
             fputcsv($handler, $fields, $delimiter);
         }
         else {
-            $delete = $fields; // Speicher den zu löschenden Eintrag in einem Array
+            $delete = $fields; // Speicher den zu löschenden Eintrag in einem Array und geb eine Meldung aus, das löschen erfolgreich war.
             $delete = '<div class="alert alert-success">
                     <strong>'.$delete['Vorname'] .' '. $delete['Name'] .' '. $delete['Rang'] .'</strong>'. $plugin_tx['GoRegister']['loeschen_erfolgreich'].'
                     </div>';
@@ -343,10 +337,9 @@ function GoRegister_writeCSVFile($filename)
 
 
 /**
- * Erstellt eine ComboBox fuer die Auswahl der CSV-Datei.
+ * Erstell eine Auswahl der CSV-Datei.
  * 
  */
-
 function GoRegister_makeFileChooser($name, $desc, $val)
 {
     //Pfad zu Stammverzeichnis
@@ -381,7 +374,7 @@ function GoRegister_makeFileChooser($name, $desc, $val)
 
 
 /**
- * Auswahl einer CSV-Datei in der Admin-Oberfläche
+ * Ausgabe der Admin-Oberfläche
  *
  */
 
