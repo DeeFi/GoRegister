@@ -1,6 +1,6 @@
 Plugin für CMSimple
 ===================
-GoRegister, Version 0.8
+GoRegister, Version 0.8.1
 
 Funktionen
 ----------
