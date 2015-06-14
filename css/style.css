@@ -1,6 +1,20 @@
-/* **************   STYLE FOR THE WEB FORM EXAMPLE   *************** */
+.inputTable {
+  padding: 4px;
+  border: 1px solid #fff;
+}
 
-#divHelp {
+#formAnmeldung {
+  position: relative;
+  width: 60%;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+
+/* **************   STYLE FOR THE WEB FORM EXAMPLE   *************** */
+#formAnmeldungHelper {
     display:none;
     position: absolute;
     margin:0 0 0 0;
@@ -14,33 +28,40 @@
     z-index:90;
 }
 
-#divHelp table {
+#formAnmeldungHelper.active {
+  left: 101%;
+  top: 33px;
+  display: block;
+  position: absolute;
+}
+
+#formAnmeldungHelper table {
     margin: 0;
 }
 
-#divHelp td,
-#divHelp th {
+#formAnmeldungHelper td,
+#formAnmeldungHelper th {
     border: 1px solid #222;
 }
 
-#divHelp th {
+#formAnmeldungHelper th {
     border-bottom: 0;
 }
 
-#divHelp .aForm_helpTables tr:hover td {
+#formAnmeldungHelper .aForm_helpTables tr:hover td {
     background-color: #FFCDCD;
     cursor: pointer;
 }
 
-#divHelp .last_name,
-#divHelp .name {
+#formAnmeldungHelper .last_name,
+#formAnmeldungHelper .name {
     width: 140px;
     padding: 4px;
 }
 
-#divHelp .club,
-#divHelp .rank,
-#divHelp .country {
+#formAnmeldungHelper .club,
+#formAnmeldungHelper .rank,
+#formAnmeldungHelper .country {
     width: 70px;
 }
 

@@ -10,7 +10,7 @@ function GoRegister_makeTextfield($name, $desc, $val){
     //Check name to insert js to activate getdata.js
     if($name == 'last_name') 
     {  
-        $d .= "onkeyup=\"getData();\" onblur=\"document.getElementById('divHelp').style.display = 'none';void();\" "; 
+        $d .= "onkeyup=\"getData();\" onblur=\"document.getElementById('formAnmeldungHelper').style.display = 'none';void();\" "; 
     } 
 
     $d .= "type=\"text\" name=\"".$name."\" id=\"".$name."\" size=\"24\" maxlength=\"64\" required></td>\n";
@@ -160,9 +160,10 @@ function GoRegister_admin_formular_ausgabe($csvfile)
 
 
     //Formular für neue Daten
-    $o .=   '<h2>Neue Daten Eingeben</h2>
+    $o .=   '<div id="formAnmeldung">
+            <h2>Neue Daten Eingeben</h2>
             <form action="'.$_GET['admin'].'" method="post">
-            <table width="50%" border="1" cellpadding="4" cellspacing="0">';
+            <table class="input-table">';
     $o .=   GoRegister_makeTextfield("last_name",$plugin_tx['GoRegister']['ausgabe_name'], "");
     $o .=   GoRegister_makeTextfield("name",$plugin_tx['GoRegister']['ausgabe_vorname'], "");
     $o .=   GoRegister_makeRangSelect("strength",$plugin_tx['GoRegister']['ausgabe_rang']);
@@ -175,9 +176,29 @@ function GoRegister_admin_formular_ausgabe($csvfile)
             </td>
             </tr>
             </table>
-            </form>
-            <!-- END of Neue Daten Eingeben-->
-            <br />';
+            </form>';
+
+    $o .=  '<div id="formAnmeldungHelper">
+                <h3>Neuen Spieler auswählen</h3>
+                <img id="imgHelpExit" src=" '. $plugin_pth .'img/calx.gif" onclick="document.getElementById(\'formAnmeldungHelper\').style.display = \'none\';">
+                <form id="helpForm_last_name">
+                    <table id="helpTable_header">
+                        <thead>
+                            <tr>
+                                <th class="last_name">'. $plugin_tx['GoRegister']['ausgabe_name'] .'</th>
+                                <th class="name">'. $plugin_tx['GoRegister']['ausgabe_vorname'] .'</th>
+                                <th class="club">'. $plugin_tx['GoRegister']['ausgabe_stadt'] .'</th>
+                                <th class="country">'. $plugin_tx['GoRegister']['ausgabe_land'] .'</th>
+                                <th class="rank">'. $plugin_tx['GoRegister']['ausgabe_rang'] .'</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <table id="helpTable_last_name" name="helpTable_last_name" class="aForm_helpTables">
+                    </table>
+                </form>
+            </div>
+            </div>';
+
 
     // Ausgabe der Liste der Vorangemeldeten Spieler
     $o .= '<h2>Vorangemeldete Spieler</h2>
@@ -185,7 +206,7 @@ function GoRegister_admin_formular_ausgabe($csvfile)
     
     //Beginn des Outputs.
     $o .=   '<!-- Beginn of Anmeldeliste Output -->
-            <table width="100%" border="1" cellpadding="4" cellspacing="0">
+            <table class="w-100">
             <tr>
             <th>' .$plugin_tx['GoRegister']['ausgabe_id']. '</th>
             <th>' .$plugin_tx['GoRegister']['ausgabe_name']. '</th>
@@ -229,26 +250,6 @@ function GoRegister_admin_formular_ausgabe($csvfile)
 
     $o .= '</table>';
 
-
-
-    // TODO: Design Anpassen!
-    $o .=  '<div id="divHelp">
-                <h3>Neuen Spieler auswählen</h3>
-                <img id="imgHelpExit" src=" '. $plugin_pth .'img/calx.gif" onclick="document.getElementById(\'divHelp\').style.display = \'none\';">
-                <form id="helpForm_last_name">
-                    <table id="helpTable_header">
-                        <tr>
-                            <th class="last_name">'. $plugin_tx['GoRegister']['ausgabe_name'] .'</th>
-                            <th class="name">'. $plugin_tx['GoRegister']['ausgabe_vorname'] .'</th>
-                            <th class="club">'. $plugin_tx['GoRegister']['ausgabe_stadt'] .'</th>
-                            <th class="country">'. $plugin_tx['GoRegister']['ausgabe_land'] .'</th>
-                            <th class="rank">'. $plugin_tx['GoRegister']['ausgabe_rang'] .'</th>
-                        </tr>
-                    </table>
-                    <table id="helpTable_last_name" name="helpTable_last_name" class="aForm_helpTables">
-                    </table>
-                </form>
-            </div>';
 
     return $o;
 }
