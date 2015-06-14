@@ -49,17 +49,15 @@ function GoRegister_checkStringInput($input, $desc, &$errors, $plugin_tx) {
 }
 
 
-function GoRegister_include_getdata_js_css() 
-{
+function GoRegister_include_getdata_js_css() {
     Global $plugin_pth;
     Global $hjs;
 
-
-
-    if(file_exists($plugin_pth.'js/getdata.js')) 
-    {
+    if(file_exists($plugin_pth.'js/getdata.min.js')) {
         $hjs .= "\n".'<script src="'.$plugin_pth.'js/getdata.js"></script>'."\n";
-    }
+    } elseif(file_exists($plugin_pth.'js/getdata.js'))  {
+        $hjs .= "\n".'<script src="'.$plugin_pth.'js/getdata.js"></script>'."\n";
+    } 
 
     if(file_exists($plugin_pth.'css/style.css')) 
     {
@@ -74,8 +72,7 @@ function GoRegister_Administer($csvfile) {
     Global $delimiter;
 
     
-    if (isset($_POST["buttonSubmit"]) && $_POST["buttonSubmit"] == "Senden")
-    {
+    if (isset($_POST["buttonSubmit"]) && $_POST["buttonSubmit"] == "Senden") {
         //Eingabe, falls vorhanden, prüfen
         // Fehlerarray:
         $errors = array();
@@ -98,8 +95,7 @@ function GoRegister_Administer($csvfile) {
         $keineDaten = false;
         
         // CSV Datei öffenen und eingegebene Daten eintragen  ...
-        if($keineDaten == false AND count($errors) == 0)
-        {
+        if($keineDaten == false AND count($errors) == 0) {
             //Öffne die Datei mit Lese- und Schreibrechten, platziere den Zeiger am Ende der Datei 
             $fp = fopen($plugin_pth . $csvfile, 'a+');
 
@@ -108,12 +104,9 @@ function GoRegister_Administer($csvfile) {
             //Eintragen in die Datei und schließen!
             fputcsv($fp, $list, $delimiter); 
             fclose($fp);
-        }
-        else 
-        {
+        } else  {
             // Fehlerausgabe-Anfang
-            if($keineDaten == false AND count($errors) > 0)
-            {
+            if($keineDaten == false AND count($errors) > 0) {
                 $output .= 'Fehler <br />
                             <ul>';
                             foreach($errors as $error)
@@ -121,19 +114,20 @@ function GoRegister_Administer($csvfile) {
                 $output .=  '</ul>'; 
             }       
         }
+
         $inhalt .= GoRegister_admin_formular_ausgabe($csvfile); 
-    }
-    else 
-    {    
+
+    } else {   
+
         $inhalt .= GoRegister_admin_formular_ausgabe($csvfile);
     }
+
     $output .= $inhalt;
     return $output;
 }
 
 
-function GoRegister_admin_formular_ausgabe($csvfile) 
-{
+function GoRegister_admin_formular_ausgabe($csvfile) {
     // Aufrufen der Language Dateien
     GLOBAL $plugin_tx;
     //Aktuelle URL

@@ -1,6 +1,6 @@
 Plugin für CMSimple
 ===================
-GoRegister, Version 0.8.1
+GoRegister, Version 0.8.1.1
 
 Funktionen
 ----------
@@ -32,7 +32,7 @@ Authors
 -------
 **Dennis Fischer**
 - Twitter: [ichderfisch](https://twitter.com/ichderfisch)
-- Github: [DeeFi](https://github.com/DeeFi)
+- Github: [ichderfisch](https://github.com/ichderfisch)
 
 **Matthis Neumann**
 - Web: [Homepage](http://www.maneumann.com)
