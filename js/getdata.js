@@ -17,7 +17,7 @@ function getData()
    
    // We launch "ProxyAjax.php" in order to allow the cross-domain ajax call to the EGD script "GetPlayerDataByData.php"
    // the function "AjaxGet" has 3 parameters: (url, GET data, callback function) 
-   AjaxGet(path + "/ProxyAjax.php", {'url':"http://www.europeangodatabase.eu/EGD/GetPlayerDataByData.php?lastname="+last_name},
+   AjaxGet("http://www.europeangodatabase.eu/EGD/GetPlayerDataByData.php?lastname="+last_name, {},
     function (data) 
     {  if (data.retcode != 'Ok')
        {  document.getElementById('divHelp').style.display = 'none';

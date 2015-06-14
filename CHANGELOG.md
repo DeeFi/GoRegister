@@ -1,5 +1,8 @@
 Changelog
 ---------
+### 0.8.1.1 140615
+- [F] Removed ProxyAjax 
+
 ### 0.8.1 100313
 - [S] Added some html5-validation to adminform
 - [F] Added success & delete messages
